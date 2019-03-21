@@ -1,0 +1,11 @@
+{
+  "extends": "../tslint.json",
+  "rules": {
+    "component-class-suffix": [true, "Tag"],
+    "component-selector": [
+      true, "element",
+      ["cf"],
+      "kebab-case"
+    ]
+  }
+}
