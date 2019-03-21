@@ -130,6 +130,7 @@ rules:
     - 2
   class-name-format:
     - 2
+    - convention: snakecase
     - ignore:
       - fontSize
   clean-import-paths:
