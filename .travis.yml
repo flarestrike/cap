@@ -1,0 +1,22 @@
+sudo: required
+language: node_js
+node_js:
+    - 10.8.0
+install:
+  - npm i
+script:
+  - npm run lint
+  - rm -rf ./src/assets/{imgs,data}
+  - npx ng test --watch=false
+  - BUILD=`date +%s`; sed -ie "s/BUILD/$BUILD/g" ./src/environments/environment.prod.ts
+  - npx ng build --prod --deploy-url /cap/ --base-href /cap/
+  - cp src/404.html dist/cap
+cache:
+    directories:
+      - node_modules
+deploy:
+  - provider: pages
+    local-dir: dist/cap
+    github-token: $github
+    skip-cleanup: true
+    keep-history: true
