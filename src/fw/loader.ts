@@ -2,18 +2,22 @@ import { Injectable, Inject, InjectionToken } from '@angular/core';
 
 import * as fb from 'firebase';
 
-class FbCore {
+interface FwConfig {
+  [key: string]: string;
+}
+class FwCore {
   SDK_VERSION: string;
   User: fb.User;
-  initializeApp(cfg, name = '[DEFAULT]'): fb.app.App { return; }
+  initializeApp(cfg: FwConfig, name = '[DEFAULT]'): fb.app.App { return; }
 }
-export class FbLib {
-  core = new FbCore();
-  config = {};
-}
-export const fbLib = new InjectionToken<FbLib>('firebase.lib', {
+export const fwCore = new InjectionToken<FwCore>('fw.core', {
     providedIn: 'root', factory: () => {
-        return new FbLib();
+        return new FwCore();
+    }
+});
+export const fwConfig = new InjectionToken<FwConfig>('fw.config', {
+    providedIn: 'root', factory: () => {
+        return {};
     }
 });
 
@@ -27,13 +31,10 @@ export class FwLoader {
           console.log('auth', ld.app.auth());
         };
     }
-    core: FbCore;
     app: fb.app.App;
-    config;
-    constructor(@Inject(fbLib) private lib: FbLib) {
-        const { core, config } = lib;
-        this.app = core.initializeApp(config, 'main');
-        this.core = core;
-        this.config = config;
+    constructor(
+        @Inject(fwCore) private core: FwCore,
+        @Inject(fwConfig) private cfg: FwConfig) {
+        this.app = core.initializeApp(cfg, 'main');
     }
 }
