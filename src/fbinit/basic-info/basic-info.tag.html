@@ -1,0 +1,22 @@
+bbbbbbb
+user:
+<pre> {{ user | json }} </pre>
+<button (click)='signout()'> signout </button>
+<div class='hsplit'>
+  <div class='signup'>
+    <h2> Sign up </h2>
+<!--     <label for='signup-email'> Email </label>
+    <input [value]='data.signup.email' name='signup-email' type='email' />
+    <label for='signup-pass'> Password </label>
+    <input [value]='data.signup.pass' name='signup-pass' type='password' />
+ -->    <button (click)='signup()'> signup </button>
+  </div>
+  <div class='signin'>
+    <h2> Sign in </h2>
+<!--     <label for='signin-email'> Email </label>
+    <input [value]='data.signin.email' name='signin-email' type='email' />
+    <label for='signin-pass'> Password </label>
+    <input [value]='data.signin.pass' name='signin-pass' type='password' />
+ -->    <button (click)='signin()'> signin </button>
+  </div>
+</div>

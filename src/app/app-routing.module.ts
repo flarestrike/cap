@@ -4,6 +4,8 @@ import { Routes, RouterModule } from '@angular/router';
 const routes: Routes = [{
   path: 'fbinit',
   loadChildren: '@mod/fbinit#FbinitMod'
+}, {
+  path: '**', pathMatch: 'full', redirectTo: 'fbinit'
 }];
 
 @NgModule({
