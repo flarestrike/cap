@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { FwLoader as Loader } from './loader';
 
 import * as fb from 'firebase';
 import { Observable, from } from 'rxjs';
@@ -17,23 +16,20 @@ export class Auth {
     this.state = fromSub<fb.User>(auth, 'onAuthStateChanged');
     this.token = fromSub<fb.User>(auth, 'onIdTokenChanged');
   }
+  check(email) {
+    return from(this.auth.fetchSignInMethodsForEmail(email));
+  }
   create({ email, pass }) {
     return from(this.auth.createUserWithEmailAndPassword(email, pass));
   }
-}
-
-@Injectable({ providedIn: 'root' })
-export class FwAuth {
-  static init(a: FwAuth) {
-    return () => {
-      console.log('auth init');
-      a.setup('main');
-    };
+  restore({ email, pass }: any = {}) {
+    let p: Promise<any>;
+    if (email) {
+      p = this.auth.signInWithEmailAndPassword(email, pass);
+    }
+    return from(p);
   }
-  constructor(private ld: Loader) {
-  }
-  setup(appName) {
-    // const app = this.ld.getApp(appName);
-    // const auth = new Auth(app.auth());
+  destroy() {
+    return from(this.auth.signOut());
   }
 }

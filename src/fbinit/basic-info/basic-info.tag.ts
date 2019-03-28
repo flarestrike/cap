@@ -17,10 +17,10 @@ export class CfBasicInfoTag {
     },
     signin: {
       email: 'bmvsc29u@gmail.com',
-      pass: '1234'
+      pass: '123456'
     }
   };
-  auth;
+  auth: Auth;
   constructor(private ld: FwLoader) {
     const app = ld.getApp('main');
     const auth = new Auth(app.auth());
@@ -30,20 +30,27 @@ export class CfBasicInfoTag {
     this.auth = auth;
   }
   signout() {
-    console.log('sign out');
+    this.auth.destroy().subscribe(e => {
+      console.log('signed out', e);
+      this.user = null;
+    });
   }
   signup() {
-    const { email, pass } = this.data.signup;
-    this.auth.create({ email, pass }).pipe(
+    this.auth.create(this.data.signup).pipe(
       catchError(e => {
         console.log(e);
         return throwError(e);
       })
     ).subscribe(e => {
-      console.log('signed up');
+      console.log('signed up', e);
     });
   }
   signin() {
-    console.log('sign in');
+    this.auth.restore(this.data.signin).subscribe(e => {
+      console.log('signed in', e);
+    });
+    // this.auth.check(this.data.signup.email).subscribe(e => {
+    //   console.log('check', e)
+    // });
   }
 }

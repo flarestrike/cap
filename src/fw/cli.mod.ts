@@ -7,7 +7,7 @@ import 'firebase/storage';
 // import 'firebase/firestore';
 
 import { NgModule, ModuleWithProviders, APP_INITIALIZER } from '@angular/core';
-import { fwCore, fwConfig, FwLoader } from './loader';
+import { fwCore, FwLoader } from './loader';
 
 export function flib() {
   return firebase;
@@ -15,11 +15,10 @@ export function flib() {
 
 @NgModule({})
 export class FwCliMod {
-  static forRoot(cfg, mod = []): ModuleWithProviders {
+  static forRoot(mod = []): ModuleWithProviders {
     return {
       ngModule: FwCliMod,
       providers: [
-        { provide: fwConfig, useValue: cfg },
         { provide: fwCore, useFactory: flib },
         ...mod
       ]

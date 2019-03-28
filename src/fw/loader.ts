@@ -2,42 +2,57 @@ import { Injectable, Inject, InjectionToken } from '@angular/core';
 
 import * as fb from 'firebase';
 
-interface FwConfig {
+const defaultApp = 'main';
+interface FwOption {
   [key: string]: string;
 }
-class FwCore {
+export class FwCore {
   SDK_VERSION: string;
   apps: fb.app.App[];
   User: fb.User;
-  initializeApp(cfg: FwConfig, name = '[DEFAULT]'): fb.app.App { return; }
+  initializeApp(cfg: FwOption, name = '[DEFAULT]'): fb.app.App { return; }
 }
+export class FwApp {
+  options: FwOption;
+  name = 'null';
+}
+
+export const fwApps = new InjectionToken<FwApp[]>('fw.apps', {
+  providedIn: 'root', factory: () => {
+    return [new FwApp()];
+  }
+});
 export const fwCore = new InjectionToken<FwCore>('fw.core', {
   providedIn: 'root', factory: () => {
     return new FwCore();
   }
 });
-export const fwConfig = new InjectionToken<FwConfig>('fw.config', {
-  providedIn: 'root', factory: () => {
-    return {};
-  }
-});
-const defaultApp = 'main';
 
-// firebase wrapper
+function debugAppInfo(sdk: FwCore) {
+  console.log('firebase SDK version', sdk.SDK_VERSION);
+  sdk.apps.forEach(a => {
+    console.log('app: [', a.name, '] ', a.options);
+  });
+}
+
 @Injectable({ providedIn: 'root' })
 export class FwLoader {
   static init(ld: FwLoader) {
     return () => {
-      const app = ld.getApp();
-      console.log('init', ld.core.SDK_VERSION);
-      console.log('app', app.name);
-      console.log('app', app);
+      ld.apps.forEach(({ options, name }) => {
+        ld.addApp(name, options);
+      });
+      if (ld.debug) {
+        debugAppInfo(ld.core);
+      }
     };
   }
+  debug = true;
+  apps: FwApp[];
   constructor(
-    @Inject(fwCore) private core: FwCore,
-    @Inject(fwConfig) private cfg: FwConfig) {
-    this.addApp(defaultApp, cfg);
+    @Inject(fwApps) apps: FwApp[],
+    @Inject(fwCore) private core: FwCore) {
+    this.apps = apps;
   }
   addApp(name, cfg) {
     this.core.initializeApp(cfg, name);
